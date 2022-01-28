@@ -5,7 +5,7 @@ log_level = "debug" # optional
 password = "password"
 
 [socks5]
-addr = "127.0.0.1:1080"
+addr = "0.0.0.0:1080"
 
 [tls]
 addr = "example.com:443"

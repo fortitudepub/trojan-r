@@ -1,3 +1,33 @@
+# 说明
+
+此项目只是为了简单验证一下rust往openwrt(redmi ac2100)交叉编译的可能性。
+
+前提：
+1. 一份编编译过的面向redmi ac 2100 openwrt 21.02源码，并加上了：https://github.com/trojan-gfw/openwrt-trojan　这里的包　，以便具备一份可用于rust编译的openssl发行包
+
+其他：
+1. 对trojan-r简单粗暴进行了修改（最近因为放假，学习了2天rust代码），去掉了server模式，替换rustls为native-tls（底层是openssl）
+2. trojan-r不支持nat模式，所以对我来说，只是测试一下可行性而已，另外，实测既便关闭debug模式，在看ytb时，仍会导致trojan-r内存占用到25M左右。因此相比前述基于c++的项目常驻是
+   4M内存而言，还是更适合一点。
+
+anyway，rust尽管还是比较复杂，但在交叉编译、包管理方面，另外就是没有GC机制这点，也同样比较吸引我，但在这此实际操作来看，暂时我还没有体会到在内存上相比go的明显优势，毕竟redmi
+ac 2100只有128M内存，很容易被oom kill掉。但这个原因可能不是rust的，而是rust可能与openssl library交互这部分，但现在来看，还有一些路要走。
+
+期待未来ring项目支持mips，trojan-r这个项目也可以继续更新。
+
+前提完成之后，主要需要做如下修改：
+
+> cargo配置：
+> [target.mipsel-unknown-linux-musl]
+> linker = "/home/xxx/code/openwrt/staging_dir/toolchain-mipsel_24kc_gcc-8.4.0_musl/bin/mipsel-openwrt-linux-musl-gcc"
+> rustflags = ["-C", "target-feature=+crt-static", "-C", "link-arg=-s"]
+
+编译配置：
+> xxx@amdpc-ubuntu:~/code/trojan-r$ PATH=$PATH:/home/xxx/code/openwrt/staging_dir/toolchain-mipsel_24kc_gcc-8.4.0_musl/bin/  OPENSSL_DIR=/home/xxx/code/openwrt/staging_dir/target-mipsel_24kc_musl/usr/ OPENSSL_STATIC=yes cargo build --target mipsel-unknown-linux-musl  
+
+另外，因为native-tls的原因需要在/home/xxx/code/openwrt/staging_dir/toolchain-mipsel_24kc_gcc-8.4.0_musl/bin/目录下增加到mipsel-unknown-linux-musl-gcc到mipsel-openwrt-linux-musl-gcc的符号链接。
+
+
 # Trojan-R
 
 高性能的 Trojan 代理，使用 Rust 实现。为嵌入式设备或低性能机器设计。R 意为 **R**ust / **R**apid。
