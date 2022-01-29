@@ -11,6 +11,9 @@ https://github.com/trojan-gfw/openwrt-trojan
 1. 对trojan-r简单粗暴进行了修改（最近因为放假，学习了2天rust代码），去掉了server模式，替换rustls为native-tls（底层是openssl）
 2. trojan-r不支持nat模式，所以对我来说，只是测试一下可行性而已，另外，实测既便关闭debug模式，在看ytb时，仍会导致trojan-r内存占用到25M左右。因此相比前述基于c++的项目常驻是
    4M内存而言，还是更适合一点。
+3. shadowsocks-rust项目里，对于x86/arm机型，可以采用ring，而对于非x86/arm机型，采用了自有的密码库，这样解决了mips支持的问题。
+
+https://github.com/shadowsocks/crypto2
 
 anyway，rust尽管还是比较复杂，但在交叉编译、包管理方面，另外就是没有GC机制这点，也同样比较吸引我，但在这此实际操作来看，暂时我还没有体会到在内存上相比go的明显优势，毕竟redmi
 ac 2100只有128M内存，很容易被oom kill掉。但这个原因可能不是rust的，而是rust可能与openssl library交互这部分，但现在来看，还有一些路要走。
